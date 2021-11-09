@@ -175,7 +175,7 @@ public:
 		string ans = "";
 		string rv = bitset<12> (final).to_string();
 
-		ans = rv[0] + rv.substr(2, 5) + rs2 + rs1 + "001" + rv.substr(8, 4) + rv[1] + "1100011";
+		ans = rv[0] + rv.substr(2, 6) + rs2 + rs1 + "001" + rv.substr(8, 4) + rv[1] + "1100011";
 		return ans;
 
 	}
@@ -196,7 +196,8 @@ public:
 		string ans = "";
 		string rv = bitset<12> (final).to_string();
 
-		ans = rv[0] + rv.substr(2, 5) + rs2 + rs1 + "100" + rv.substr(8, 4) + rv[1] + "1100011";
+		deb(rv);
+		ans = rv[0] + rv.substr(2, 6) + rs2 + rs1 + "100" + rv.substr(8, 4) + rv[1] + "1100011";
 		return ans;
 
 	}
@@ -217,7 +218,7 @@ public:
 		string ans = "";
 		string rv = bitset<12> (final).to_string();
 
-		ans = rv[0] + rv.substr(2, 5) + rs2 + rs1 + "101" + rv.substr(8, 4) + rv[1] + "1100011";
+		ans = rv[0] + rv.substr(2, 6) + rs2 + rs1 + "101" + rv.substr(8, 4) + rv[1] + "1100011";
 		return ans;
 
 	}
