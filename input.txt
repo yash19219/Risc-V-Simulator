@@ -1,0 +1,3 @@
+LUI r1, 5
+LUI r2, 10
+SUB r3, r1, r2
