@@ -33,9 +33,11 @@ const int N = 2e5 + 5;
 #define MAX_NAME_LEN 1000
 class Assembler {
 
-	map<int, string> instructions;
+	vector<string> instructions;
 	map<string, int> label;
-	map<string, pair<int, int>> procedure;
+	map<int, int> procedure;
+	map<string, int> procedureName;
+
 
 public:
 
@@ -102,13 +104,14 @@ public:
 		int c = 0;
 		string rv = bitset<12> (c).to_string();
 		//	deb2(rv, rs1, rd);
-		ans = rv + rs1 + "000" + rd + "0010011";
+		ans = rv + rs1 + "000" + rd + "1100111";
 		return ans;
 	}
 
-	string jal(string rd, string r) {
+	string jal(string rd, string r, int f) {
 		string ans = "";
-		int c = procedure[r].first / 4;
+		int c = procedureName[r];
+		c -= f;
 		string rv = bitset<20> (c).to_string();
 		ans = rv[rv.size() - 1] + rv.substr(0, 10) + rv[10] + rv.substr(11, 8) + rd + "1101111";
 		return ans;
@@ -222,167 +225,15 @@ public:
 
 	}
 
-	vector<string> type1(int last, int i1, string line[]) {
-		string rs1 = "", rs2 = "", rd = "";
-		for (int i = last; i < line[i1].size(); i++) {
-			if (line[i1][i] == ',') {
-				last = i + 2;
-				break;
-			}
-			else
-				rd.push_back(line[i1][i]);
-		}
-
-		for (int i = last; i < line[i1].size(); i++) {
-			if (line[i1][i] == ',') {
-				last = i + 2;
-				break;
-			}
-			else
-				rs1.push_back(line[i1][i]);
-		}
-
-		for (int i = last; i < line[i1].size(); i++) {
-			if (line[i1][i] == ' ') {
-				last = i + 2;
-				break;
-			}
-			else
-				rs2.push_back(line[i1][i]);
-		}
-
-		vector<string> a;
-		a.push_back(rd);
-		a.push_back(rs1);
-		a.push_back(rs2);
-
-		return a;
-	}
-
-	vector<string> type2(int last, int i1, string line[]) {
-		string rs1 = "", rs2 = "", r = "";
-		for (int i = last; i < line[i1].size(); i++) {
-			if (line[i1][i] == ',') {
-				last = i + 2;
-				break;
-			}
-			else
-				rs1.push_back(line[i1][i]);
-		}
-
-		for (int i = last; i < line[i1].size(); i++) {
-			if (line[i1][i] == ',') {
-				last = i + 2;
-				break;
-			}
-			else
-				rs2.push_back(line[i1][i]);
-		}
-
-		for (int i = last; i < line[i1].size(); i++) {
-			if (line[i1][i] == ' ') {
-				last = i + 2;
-				break;
-			}
-			else
-				r.push_back(line[i1][i]);
-		}
-
-		vector<string> a;
-
-		a.push_back(rs1);
-		a.push_back(rs2);
-		a.push_back(r);
-
-		return a;
-	}
-
-
-	vector<string> type3(int last, int i1, string line[]) {
-		string rs1 = "", rs2 = "", r = "";
-		for (int i = last; i < line[i1].size(); i++) {
-			if (line[i1][i] == ',') {
-				last = i + 2;
-				break;
-			}
-			else
-				rs1.push_back(line[i1][i]);
-		}
-
-
-		bool f = true;
-		for (int i = last; i < line[i1].size(); i++) {
-			if (line[i1][i] == '(') {
-				last = i + 1;
-				f = false;
-				break;
-			}
-			else
-				r.push_back(line[i1][i]);
-		}
-		if (!f) {
-			for (int i = last; i < line[i1].size(); i++) {
-				if (line[i1][i] == ')') {
-					last = i + 2;
-					break;
-				}
-				else
-					rs2.push_back(line[i1][i]);
-			}
-		}
-		else {
-			rs2 = r;
-			r = "0";
-		}
-
-		vector<string> a;
-
-		//deb2(rs1, rs2, r);
-		a.push_back(rs1);
-		a.push_back(rs2);
-		a.push_back(r);
-
-		return a;
-	}
-
-
-	vector<string> type4(int last, int i1, string line[]) {
-		string rs1 = "", r = "";
-		for (int i = last; i < line[i1].size(); i++) {
-			if (line[i1][i] == ',') {
-				last = i + 2;
-				break;
-			}
-			else
-				rs1.push_back(line[i1][i]);
-		}
 
 
 
-		for (int i = last; i < line[i1].size(); i++) {
-			if (line[i1][i] == ' ') {
-				last = i + 2;
-				break;
-			}
-			else
-				r.push_back(line[i1][i]);
-		}
-
-
-		vector<string> a;
-
-
-		a.push_back(rs1);
-
-		a.push_back(r);
-
-		return a;
-	}
-
-
-
-	map<int, string> Rinst() {
+	vector<string> Rinst() {
 		return instructions;
+	}
+
+	map<int,int> getProc(){
+		return procedure;
 	}
 
 
@@ -392,6 +243,78 @@ public:
 		int ar = 0;
 		int addr = -1;
 
+		map<int, vector<string>> nlines;
+		int ng = 0;
+		int prev=-1;
+		for (int i = 0; i < n; i++) {
+			vector<string> temp;
+			string g = "";
+			for (int i1 = 0; i1 < line[i].size(); i1++) {
+				if (line[i][i1] == '.') {
+					if (g.size() != 0)
+						temp.push_back(g);
+
+					g = "";
+				}
+				else
+					g.push_back(line[i][i1]);
+
+			}
+			if (temp.size() == 1) {
+				for (int i2 = 0; i2 < temp[0].size(); i2++)
+					if (temp[0][i2] >= 65 && temp[0][i2] <= 92)
+					{
+						temp[0][i2] = temp[0][i2] + 32;
+					}
+				procedureName[temp[0].substr(0, temp[0].size() - 1)] = i - ng;
+				prev = i - ng;
+				ng++;
+			}
+			else {
+				string temp1 = temp[0];
+
+				for (int i2 = 0; i2 < temp[0].size(); i2++)
+					if (temp[0][i2] >= 65 && temp[0][i2] <= 92)
+					{
+						temp[0][i2] = temp[0][i2] + 32;
+					}
+				if (temp[0] == "jalr") {
+					procedure[prev] = i - ng;
+					prev = -1;
+				}
+				nlines[i - ng] = temp;
+			}
+
+		}
+
+		for (int i1 = 0; i1 < nlines.size(); i1++) {
+			for (int i = 0; i < nlines[i1].size(); i++) {
+				for (int i2 = 0; i2 < nlines[i1][i].size(); i2++)
+					if (nlines[i1][i][i2] >= 65 && nlines[i1][i][i2] <= 92)
+					{
+						nlines[i1][i][i2] = nlines[i1][i][i2] + 32;
+					}
+			}
+
+		}
+
+
+		// for (int i1 = 0; i1 < nlines.size(); i1++) {
+		// 	deb(i1);
+		// 	for (int i = 0; i < nlines[i1].size(); i++) {
+
+		// 		cout << nlines[i1][i] << " ";
+
+		// 	}
+		// 	cout << endl;
+
+		// }
+
+
+
+
+
+
 		for (int i = 0; i < 32; i++) {
 			string rv = bitset<5> (i).to_string();
 			string ii = to_string(i);
@@ -400,20 +323,9 @@ public:
 
 		}
 
-		for (int i1 = 0; i1 < n; i1++) {
-			string op = "";
+		for (int i1 = 0; i1 < nlines.size(); i1++) {
+			string op = nlines[i1][0];
 			int last = 0;
-			bool p = true;
-			for (int i = 0; i < line[i1].size(); i++) {
-				if (line[i1][i] == ' ' && !p) {
-					last = i + 1;
-					break;
-				}
-				else {
-					p = false;
-					op.push_back(line[i1][i]);
-				}
-			}
 
 			if (op[op.size() - 1] == ':') {
 				// ANMOL TEZ MT CHL
@@ -424,366 +336,233 @@ public:
 			}
 		}
 
-		for (int i1 = 0; i1 < n; i1++) {
-			string op = "";
-			int last = 0;
-			bool p = true;
-			for (int i = 0; i < line[i1].size(); i++) {
-				if (line[i1][i] == ' ' && !p) {
-					last = i + 1;
-					break;
-				}
-				else if (line[i1][i] != ' ') {
-					p = false;
-					op.push_back(line[i1][i]);
-				}
-			}
-			//deb1(op, i1);
-
-			if (op[op.size() - 1] == ':' && i1 + 1 < n && line[i1 + 1][0] == ' ') {
-				int j = i1 + 1;
-				int cnt = addr ;
-				//int last = 0;
-				//	int y = 3;
-				while (true) {
-					bool p1 = true;
-					//cout << "pgkiglti" << endn;
-					string op1 = "";
-					for (int i = 0; i < line[j].size(); i++) {
-						if (line[j][i] == ' ' && !p1) {
-							//last = i + 1;
-							break;
-						}
-						else if (line[j][i] != ' ') {
-							p1 = false;
-							op1.push_back(line[j][i]);
-						}
-					}
-					//deb(op1);
-					cnt++;
-					j++;
-					//deb(line[j]);
-					if (op1 == "JALR")
-						break;
-
-				}
-				int caddr = addr + 1;
-				int start = caddr * 4;
-				int end = cnt * 4;
-				procedure[op.substr(0, op.size() - 1)] = {start, end};
-				i1 = j;
-
-				//	deb1(start, end);
 
 
 
-
-
-			}
-		}
-
-
-		for (int i1 = 0; i1 < n; i1++) {
-
-			string op = "";
-			int last = 0;
-			bool p = true;
-			for (int i = 0; i < line[i1].size(); i++) {
-				if (line[i1][i] == ' ' && !p) {
-					last = i + 1;
-					break;
-				}
-				else if (line[i1][i] != ' ') {
-					p = false;
-					op.push_back(line[i1][i]);
-				}
-			}
-			//deb(op);
-			if (op[op.size() - 1] == ':' && i1 + 1 < n && line[i1 + 1][0] == ' ') {
+		for (int i1 = 0; i1 < nlines.size(); i1++) {
+			if (nlines[i1].size() == 1)
 				continue;
+			int last = 0;
+			string op = nlines[i1][last];
+
+			if (op[op.size() - 1] == ':') {
+				op = nlines[i1][last + 1];
+				last = last + 1;
 			}
-			else {
-				addr++;
 
-				if (op[op.size() - 1] == ':') {
-					op = "";
-					bool p = true;
-					for (int i = last; i < line[i1].size(); i++) {
-						if (line[i1][i] == ' ' && !p) {
-							last = i + 1;
-							break;
-						}
-						else if (line[i1][i] != ' ') {
-							p = false;
-							op.push_back(line[i1][i]);
-						}
-					}
+			if (op == "add") {
 
-				}
+				string rs1 = "", rs2 = "", rd = "";
+				rd = registers[nlines[i1][last + 1]];
+				rs1 = registers[nlines[i1][last + 2]];
+				rs2 = registers[nlines[i1][last + 3]];
 
-				int address = addr * 4;
 
-				if (op == "ADD") {
-					string rs1 = "", rs2 = "", rd = "";
-					vector<string> a = type1(last, i1, line);
-					rd = registers[a[0]];
-					rs1 = registers[a[1]];
-					rs2 = registers[a[2]];
+				string ans = add(rs1, rs2, rd);
+				instructions.push_back(ans);
 
-
-					string ans = add(rs1, rs2, rd);
-					instructions[address] = ans;
-
-				}
-				else if (op == "ADDI") {
-					string rs1 = "", rd = "";
-
-					vector<string> a = type2(last, i1, line);
-					rd = registers[a[0]];
-					rs1 = registers[a[1]];
-					int val = stoi(a[2]);
-
-
-					string ans = addi(rs1, val, rd);
-					instructions[address] = ans;
-
-				}
-				else if (op == "SUB") {
-					string rs1 = "", rs2 = "", rd = "";
-					vector<string> a = type1(last, i1, line);
-					rd = registers[a[0]];
-					rs1 = registers[a[1]];
-					rs2 = registers[a[2]];
-
-
-					string ans = sub(rs1, rs2, rd);
-					instructions[address] = ans;
-
-
-				}
-				else if (op == "LW") {
-					string rs1 = "", rd = "";
-
-					vector<string> a = type3(last, i1, line);
-					rd = registers[a[0]];
-					rs1 = registers[a[1]];
-					int val = stoi(a[2]);
-
-
-					string ans = lw(rs1, val, rd);
-					instructions[address] = ans;
-
-				}
-				else if (op == "SW") {
-					string rs1 = "", rd = "";
-
-					vector<string> a = type3(last, i1, line);
-					rd = registers[a[0]];
-					rs1 = registers[a[1]];
-					int val = stoi(a[2]);
-
-
-					string ans = sw(rs1, val, rd);
-					instructions[address] = ans;
-
-				}
-				else if (op == "JALR") {
-					string rd = "r31";
-					string ra = to_string(ar);
-					string rs1 = "";
-					for (int i = last; i < line[i1].size(); i++) {
-						if (line[i1][i] == ',') {
-							last = i + 2;
-							break;
-						}
-						else
-							rs1.push_back(line[i1][i]);
-					}
-
-
-					string ans = jalr(registers[rs1], registers[rd]);
-					instructions[address] = ans;
-
-
-
-
-				}
-				else if (op == "JAL") {
-					ar = i1 + 1;
-					string rd = "", r = "";
-
-					vector<string> a = type4(last, i1, line);
-					rd = registers[a[0]];
-					//r = registers[a[1]];
-					//int val = stoi(a[2]);
-
-
-					string ans = jal(rd, r);
-					instructions[address] = ans;
-
-
-
-
-				}
-				else if (op == "BEQ") {
-					string rs1 = "", rs2 = "";
-					vector<string> a = type2(last, i1, line);
-					rs1 = registers[a[0]];
-					rs2 = registers[a[1]];
-					//deb(a[2]);
-
-					string ans = beq(rs1, rs2, i1, a[2]);
-					instructions[address] = ans;
-
-
-				}
-				else if (op == "BNE") {
-					string rs1 = "", rs2 = "";
-					vector<string> a = type2(last, i1, line);
-					rs1 = registers[a[0]];
-					rs2 = registers[a[1]];
-
-					string ans = bne(rs1, rs2, i1, a[2]);
-					instructions[address] = ans;
-
-				}
-				else if (op == "BLT") {
-					string rs1 = "", rs2 = "";
-					vector<string> a = type2(last, i1, line);
-					rs1 = registers[a[0]];
-					rs2 = registers[a[1]];
-
-					string ans = blt(rs1, rs2, i1, a[2]);
-					instructions[address] = ans;
-
-				}
-				else if (op == "BGE") {
-					string rs1 = "", rs2 = "";
-					vector<string> a = type2(last, i1, line);
-					rs1 = registers[a[0]];
-					rs2 = registers[a[1]];
-
-					string ans = bge(rs1, rs2, i1, a[2]);
-					instructions[address] = ans;
-
-				}
-				else if (op == "LUI") {
-					string rs1 = "";
-
-					vector<string> a = type3(last, i1, line);
-
-					rs1 = registers[a[0]];
-					int val = stoi(a[1]);
-
-
-					string ans = lui(rs1, val);
-					instructions[address] = ans;
-
-				}
-				else if (op == "AND") {
-					string rs1 = "", rs2 = "", rd = "";
-					vector<string> a = type1(last, i1, line);
-					rd = registers[a[0]];
-					rs1 = registers[a[1]];
-					rs2 = registers[a[2]];
-
-
-					string ans = annd(rs1, rs2, rd);
-					instructions[address] = ans;
-
-				}
-				else if (op == "OR") {
-					string rs1 = "", rs2 = "", rd = "";
-					vector<string> a = type1(last, i1, line);
-					rd = registers[a[0]];
-					rs1 = registers[a[1]];
-					rs2 = registers[a[2]];
-
-
-					string ans = oor(rs1, rs2, rd);
-					instructions[address] = ans;
-
-				}
-				else if (op == "XOR") {
-					string rs1 = "", rs2 = "", rd = "";
-					vector<string> a = type1(last, i1, line);
-					rd = registers[a[0]];
-					rs1 = registers[a[1]];
-					rs2 = registers[a[2]];
-
-
-					string ans = xorr(rs1, rs2, rd);
-					instructions[address] = ans;
-
-				}
-				else if (op == "SLL") {
-					string rs1 = "", rs2 = "", rd = "";
-					vector<string> a = type1(last, i1, line);
-					rd = registers[a[0]];
-					rs1 = registers[a[1]];
-					rs2 = registers[a[2]];
-
-
-					string ans = sll(rs1, rs2, rd);
-					instructions[address] = ans;
-
-				}
-				else if (op == "SRA") {
-					string rs1 = "", rs2 = "", rd = "";
-					vector<string> a = type1(last, i1, line);
-					rd = registers[a[0]];
-					rs1 = registers[a[1]];
-					rs2 = registers[a[2]];
-
-
-					string ans = sra(rs1, rs2, rd);
-					instructions[address] = ans;
-
-				}
-				//	deb1(op, addr);
 			}
+			else if (op == "addi") {
+				string rs1 = "", rd = "";
+
+				//vector<string> a = type2(last, i1, line);
+				rd = registers[nlines[i1][last + 1]];
+				rs1 = registers[nlines[i1][last + 2]];
+				int val = stoi(nlines[i1][last + 3]);
+
+
+				string ans = addi(rs1, val, rd);
+				instructions.push_back(ans);
+
+			}
+			else if (op == "sub") {
+				string rs1 = "", rs2 = "", rd = "";
+				//vector<string> a = type1(last, i1, line);
+				rd = registers[nlines[i1][last + 1]];
+				rs1 = registers[nlines[i1][last + 2]];
+				rs2 = registers[nlines[i1][last + 3]];
+
+
+				string ans = sub(rs1, rs2, rd);
+				instructions.push_back(ans);
+
+
+			}
+			else if (op == "lw") {
+				// rd int(rs1)
+				string rs1 = "", rd = "";
+
+				//vector<string> a = type3(last, i1, line);
+				rd = registers[nlines[i1][last + 1]];
+				rs1 = registers[nlines[i1][last + 3]];
+				int val = stoi(nlines[i1][last + 2]);
+
+
+				string ans = lw(rs1, val, rd);
+				instructions.push_back(ans);
+
+			}
+			else if (op == "sw") {
+				// rd int(rs1)
+				string rs1 = "", rd = "";
+
+				//vector<string> a = type3(last, i1, line);
+				rd = registers[nlines[i1][last + 1]];
+				rs1 = registers[nlines[i1][last + 3]];
+				int val = stoi(nlines[i1][last + 2]);
+
+
+				string ans = sw(rs1, val, rd);
+				instructions.push_back(ans);
+
+			}
+			else if (op == "jalr") {
+				// rd rs1 offset
+				string rd = nlines[i1][last + 1];
+				string rs1 = nlines[i1][last + 2];
+
+
+
+				string ans = jalr(registers[rs1], registers[rd]);
+				instructions.push_back(ans);
+
+
+
+
+			}
+			else if (op == "jal") {
+				// rd offset
+				//ar = i1 + 1;
+				string rd = "", r = "";
+
+				//vector<string> a = type4(last, i1, line);
+				rd = registers[nlines[i1][last + 1]];
+
+
+
+				string ans = jal(rd, nlines[i1][last + 2], i1);
+				instructions.push_back(ans);
+				deb(ans);
+
+
+
+
+			}
+
+			else if (op == "beq") {
+
+				string rs1 = "", rs2 = "";
+				//vector<string> a = type2(last, i1, line);
+				rs1 = registers[nlines[i1][last + 1]];
+				rs2 = registers[nlines[i1][last + 2]];
+				//deb(a[2]);
+
+				string ans = beq(rs1, rs2, i1, nlines[i1][last + 3]);
+				instructions.push_back(ans);
+
+
+			}
+			else if (op == "bne") {
+				string rs1 = "", rs2 = "";
+				//vector<string> a = type2(last, i1, line);
+				rs1 = registers[nlines[i1][last + 1]];
+				rs2 = registers[nlines[i1][last + 2]];
+				//deb(a[2]);
+
+				string ans = bne(rs1, rs2, i1, nlines[i1][last + 3]);
+				instructions.push_back(ans);
+
+			}
+			else if (op == "blt") {
+				string rs1 = "", rs2 = "";
+				rs1 = registers[nlines[i1][last + 1]];
+				rs2 = registers[nlines[i1][last + 2]];
+				string ans = blt(rs1, rs2, i1, nlines[i1][last + 3]);
+				instructions.push_back(ans);
+
+			}
+			else if (op == "bge") {
+				string rs1 = "", rs2 = "";
+				rs1 = registers[nlines[i1][last + 1]];
+				rs2 = registers[nlines[i1][last + 2]];
+				string ans = bge(rs1, rs2, i1, nlines[i1][last + 3]);
+				instructions.push_back(ans);
+
+			}
+			else if (op == "lui") {
+				string rs1 = "";
+
+				//	vector<string> a = type3(last, i1, line);
+
+				rs1 = registers[nlines[i1][last + 1]];
+				int val = stoi(nlines[i1][last + 2]);
+
+
+				string ans = lui(rs1, val);
+				instructions.push_back(ans);
+
+			}
+			else if (op == "and") {
+				string rs1 = "", rs2 = "", rd = "";
+				rd = registers[nlines[i1][last + 1]];
+				rs1 = registers[nlines[i1][last + 2]];
+				rs2 = registers[nlines[i1][last + 3]];
+
+
+				string ans = annd(rs1, rs2, rd);
+				instructions.push_back(ans);
+
+			}
+			else if (op == "or") {
+				string rs1 = "", rs2 = "", rd = "";
+				rd = registers[nlines[i1][last + 1]];
+				rs1 = registers[nlines[i1][last + 2]];
+				rs2 = registers[nlines[i1][last + 3]];
+
+
+				string ans = oor(rs1, rs2, rd);
+				instructions.push_back(ans);
+
+			}
+			else if (op == "xor") {
+				string rs1 = "", rs2 = "", rd = "";
+				rd = registers[nlines[i1][last + 1]];
+				rs1 = registers[nlines[i1][last + 2]];
+				rs2 = registers[nlines[i1][last + 3]];
+
+
+				string ans = xorr(rs1, rs2, rd);
+				instructions.push_back(ans);
+
+			}
+			else if (op == "sll") {
+				string rs1 = "", rs2 = "", rd = "";
+				rd = registers[nlines[i1][last + 1]];
+				rs1 = registers[nlines[i1][last + 2]];
+				rs2 = registers[nlines[i1][last + 3]];
+
+
+				string ans = sll(rs1, rs2, rd);
+				instructions.push_back(ans);
+
+			}
+			else if (op == "sra") {
+				string rs1 = "", rs2 = "", rd = "";
+				rd = registers[nlines[i1][last + 1]];
+				rs1 = registers[nlines[i1][last + 2]];
+				rs2 = registers[nlines[i1][last + 3]];
+
+
+				string ans = sra(rs1, rs2, rd);
+				instructions.push_back(ans);
+
+			}
+
 		}
+
+
+
 
 	}
 
 };
-
-
-// int main() {
-// 	fast_cin();
-// 	Assembler assembler;
-// 	int n = 0;
-
-// 	freopen("input.txt", "r", stdin);
-// 	freopen("binary.txt", "w", stdout);
-
-
-
-// 	vector<string> lines;
-// 	string str;
-// 	while (getline(cin, str)) {
-// 		n++;
-// 		lines.push_back(str);
-// 		//cout << str << endn;
-// 	}
-// 	string line[n];
-// 	for (int i = 0; i < n; i++) {
-// 		line[i] = lines[i];
-// 	}
-
-
-// 	assembler.binaryGenerate(line, n);
-// 	map<int, string> instructions = assembler.Rinst();
-
-// 	for (auto x : instructions) {
-// 		cout <<  x.second << endn;
-// 		//cout << 1 << endn;
-// 	}
-
-
-
-
-
-
-// 	return 0;
-// }

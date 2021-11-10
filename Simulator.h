@@ -28,9 +28,16 @@ public:
 		registers[i]=0;
 		}
 	}
-	void fetch(){
-		instruction=mem.memory[pc];
-		pc=pc+1;
+	void fetch(map<int,int> m){
+		cout<<"PC IS : "<<pc<<endl;
+		if(m.find(pc)==m.end() or registers[31]!=0){
+			instruction=mem.memory[pc];
+			pc=pc+1;	
+		}
+		else{
+			pc=m[pc]+1;
+		}
+		
 	}
 
 	vector<string> decode(){
@@ -179,21 +186,24 @@ public:
 			v.push_back("jal");
 
 			v.push_back(instruction.substr(20,5));  //rd
-			v.push_back(instruction.substr(11,1)+instruction.substr(21,10)+instruction.substr(20,1)+instruction.substr(12,8)); ///check not confirmed :( last mai 12 zeros add karne hai shyd??
+			string offset=instruction.substr(1,19)+instruction.substr(0,1);
+			v.push_back(offset);
+			//v.push_back(instruction.substr(11,1)+instruction.substr(21,10)+instruction.substr(20,1)+instruction.substr(12,8)); ///check not confirmed :( last mai 12 zeros add karne hai shyd??
 		}
 
 		else if(opt.compare(JALR)==0){
 			c=instruction.substr(17,3);
 			if(c.compare("000")==0){
 				v.push_back("jalr");
+				v.push_back(instruction.substr(20,5));  //rd
+				v.push_back(instruction.substr(12,5));  //rs1
+				v.push_back(instruction.substr(0,12));  //offset
 			}
 			else{
 				cout<<"INVALID Instruction!!!!\n";
 			}
 
-			v.push_back(instruction.substr(20,5));  //rd
-			v.push_back(instruction.substr(12,5));  //rs1
-			v.push_back(instruction.substr(0,12));  //offset
+			
 		}
 
 		else{
@@ -248,12 +258,12 @@ public:
 			return lui(v[1],v[2]);
 		}
 		else if(v[0].compare("jalr")==0){
-			jalr(v[1],v[2],v[3]);
-			return -1;
+			int a= jalr(v[1],v[2],v[3]);
+			cout<<"IF JALR-------------- "<<registers[31]<<" return value"<<a<<endl;
+			return a;
 		}
 		else if(v[0].compare("jal")==0){
-			jal(v[1],v[2]);
-			return -1;
+			return jal(v[1],v[2]);
 		}
 		else if(v[0].compare("lw")==0){
 			return lw(v[1],v[2],v[3]);
@@ -333,11 +343,27 @@ public:
 	}
 
 
-	void jalr(string rd,string rs1,string offset){
+	int jalr(string rd,string rs1,string offset){
+		int a=pc;
+		pc=registers[stoi(rs1,0,2)]+stoi(offset,0,2);
+		cout<<"INSIDE JALR "<<pc<<endl;
+		registers[31]=0;
+		cout<<"31 "<<registers[31]<<endl;
+		return a;
 
 	}
 
-	void jal(string rd,string offset){
+	int jal(string rd,string offset){
+		int a=pc;
+		cout<<"IN JAL "<<offset<<endl;
+		int c=stoi(offset,0,2);
+			if(c>524287){
+				c-=1048576;
+			}
+			cout<<"int offset "<<c<<endl;
+		pc+=c-1;
+		return a;
+
 
 	}
 
@@ -480,6 +506,8 @@ public:
 		cout<<endl;
 
 	}
+
+
 
 
 };

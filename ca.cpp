@@ -86,6 +86,10 @@ int main() {
 	string str;
 	while (getline(myFile_Handler, str)) {
 		n++;
+		for (int i = 0; i < str.size(); i++)
+			if (str[i] == ' ' || str[i] == ',' || str[i] == '(' || str[i] == ')')
+				str[i] = '.';
+		str.push_back('.');
 		lines.push_back(str);
 		//cout << str << endn;
 	}
@@ -99,13 +103,12 @@ int main() {
 
 
 	assembler.binaryGenerate(line, n);
-	map<int, string> instruction = assembler.Rinst();
+	vector<string> instruction = assembler.Rinst();
 
 	for (auto x : instruction) {
-		myFile_Handler1 <<  x.second << endn;
+		myFile_Handler1 <<  x << endl;
 		//cout << 1 << endn;
 	}
-
 	// fclose(pp);
 	// fclose(fp);
 
@@ -133,11 +136,16 @@ int main() {
 	}
 
 	//for (int i = 0; i < instructions.size(); i++) {
+	map<int,int> m=assembler.getProc();
+	cout<<"size of m"<<m.size()<<endl;
+	for(auto it:m){
+		cout<<"proc map"<<it.first<<" "<<it.second<<endl;
+	}
 	while(sim.pc<instruction.size()){
-		cout << sim.pc << endl;
+		//cout << sim.pc << endl;
 
 		//Fetching
-		sim.fetch();
+		sim.fetch(assembler.getProc());
 
 		cout << "IR: " << sim.instruction << endl;
 
@@ -164,11 +172,14 @@ int main() {
 
 		sim.RFDump();
 
+
+		//cout<<"pc  "<<sim.pc+1<<endl;
 		cout << "\n\n-----------------------------------------------\n";
 
-		cout<<"pc  "<<sim.pc<<endl;
+		
 
 	}
+	cout<<sim.mem.memory[12]<<endl;
 	//myFile_Handler2.close();
 
 }
