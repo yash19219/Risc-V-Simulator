@@ -22,3 +22,17 @@ ADDI r2, r2, 10
 jaLr r0,r31,0
 JAL r31, Molan
 ADD r10,r1,r2
+
+
+
+LUI r1, 5
+LUI r2, 10
+LUI r3, 30
+Molan: 
+ADDI r2, r2, 10
+jaLr r0,r31,0
+JAL r31, Molan
+ADD r10,r1,r2
+sw r10,10(r2)
+lw r20,10(r2)
+

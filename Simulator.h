@@ -281,7 +281,8 @@ public:
 			return stoi(mem.memory[val],0,2);
 		}
 		else if(v[0].compare("sw")==0){
-			mem.memory[val] = stoi(v[2],0,2);
+			mem.memory[val] = bitset<32>(registers[stoi(v[2],0,2)]).to_string();
+			cout<<"IN MEMORY : "<<val<<" "<<stoi(mem.memory[val],0,2)<<endl;
 			return 0;
 		}
 		else{

@@ -122,7 +122,7 @@ public:
 		string ans = "";
 		string rv2 = bitset<12> (c).to_string();
 		string rv = rv2.substr(0, 7);
-		string rv1 = rv2.substr(8, 5);
+		string rv1 = rv2.substr(7, 5);
 		ans = rv + rd + rs1 + "010" + rv1 + "0100011";
 		return ans;
 
