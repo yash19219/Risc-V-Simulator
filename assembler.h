@@ -93,7 +93,7 @@ public:
 	string lw(string rs1, int c, string rd) {
 		string ans = "";
 		string rv = bitset<12> (c).to_string();
-		ans = rv + rs1 + "010" + rd + "0010011";
+		ans = rv + rs1 + "010" + rd + "0000011";
 		return ans;
 	}
 
@@ -196,7 +196,6 @@ public:
 		string ans = "";
 		string rv = bitset<12> (final).to_string();
 
-		deb(rv);
 		ans = rv[0] + rv.substr(2, 6) + rs2 + rs1 + "100" + rv.substr(8, 4) + rv[1] + "1100011";
 		return ans;
 
@@ -338,7 +337,7 @@ public:
 
 		vector<string> a;
 
-
+		//deb2(rs1, rs2, r);
 		a.push_back(rs1);
 		a.push_back(rs2);
 		a.push_back(r);
