@@ -21,7 +21,7 @@ public:
 	string JALR="1100111";
 	string JAL="1101111";
 
-	Simulator(int memSize,int memAccessTime){
+	Simulator(int memSize,float memAccessTime){
 		mem.setSize(memSize);
 		mem.setAccessTime(memAccessTime);
 		for(int i=0;i<32;i++){
@@ -177,7 +177,7 @@ public:
 			v.push_back("lui");
 			cout<<"lui ke andar"<<endl;
 			v.push_back(instruction.substr(20,5));  //rd
-			v.push_back("000000000000"+instruction.substr(0,20));   //imm
+			v.push_back(instruction.substr(0,20)+"000000000000");   //imm
 			cout<<v[1]<<" "<<v[2]<<endl;
 
 		}
@@ -310,6 +310,9 @@ public:
 	int addi(string rd,string rs1, string imm){
 		int a=stoi(rs1,0,2);
 		int b=stoi(imm,0,2);
+		if(b>2047){
+			b-=4096;
+		}
 		int result=registers[a]+b;
 		return result;
 		//registers[stoi(rd),0,2]=result;
@@ -329,6 +332,9 @@ public:
 		int a=stoi(rs1,0,2);
 		int b=stoi(rd,0,2);
 		int off=stoi(offset,0,2);
+		if(off>2047){
+			off-=4096;
+		}
 		return registers[a]+off;
 		//return stoi(mem.memory[registers[a]+off],0,2);
 		//registers[b]=mem[registers[a]+off];
@@ -339,6 +345,10 @@ public:
 		int a=stoi(rs1,0,2);
 		int b=stoi(rs2,0,2);
 		int off=stoi(offset,0,2);
+		if(off>2047){
+			off-=4096;
+		}
+		cout<<"offset "<<offset<<endl;
 		return registers[a]+off;
 		//mem.memory[registers[a]+off]=bitset<32>(registers[b]).to_string();
 	}
@@ -440,10 +450,16 @@ public:
 	int lui(string rd,string imm){
 		int a=stoi(rd,0,2);
 
-		// for(int i=31;i>=31-12;i--){
-		// 	imm[i]='0';
-		// }
-		return stoi(imm,0,2);
+		cout<<"in lui "<<imm<<endl;
+		cout<<"hello"<<endl;
+		cout<<imm.length()<<endl;
+		long long int b=stoll(imm,0,2);
+		if(b>(pow(2,31)-1)){
+			b-=pow(2,32);
+		}
+
+		cout<<"inlui : "<<b<<endl;
+		return (int)b;
 		//registers[a]=stoi(imm,0,2);
 
 	}
@@ -475,16 +491,31 @@ public:
 	int sll(string rd, string rs1,string rs2){
 		int a=registers[stoi(rs1,0,2)];
 		int b=registers[stoi(rs2,0,2)];
-
-		return a<<b;
+		string s=bitset<32>(b).to_string().substr(27,5);
+		int c=stoi(s,0,2);
+		return a<<c;
 		//registers[stoi(rd,0,2)]=a<<b;
 	}
 
 	int sra(string rd, string rs1,string rs2){
 		int a=registers[stoi(rs1,0,2)];
 		int b=registers[stoi(rs2,0,2)];
+		string s=bitset<32>(b).to_string().substr(27,5);
+		int c=stoi(s,0,2);
+		if(a>=0)
+			return a>>c;
+		string d=bitset<32>(a).to_string().substr(0,32-c);
+		string e="";
+		for(int i=0;i<c;i++){
+			e+="1";
+		}
+		e+=d;
+		long long int x=stoll(e,0,2);
+		if(x>(pow(2,31)-1)){
+			x-=pow(2,32);
+		}
+		return (int)x;
 
-		return a>>b;
 		//registers[stoi(rd,0,2)]=a>>b;
 	}
 

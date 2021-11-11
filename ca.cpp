@@ -75,12 +75,6 @@ int main() {
 	fstream myFile_Handler, myFile_Handler1, myFile_Handler2;
 	myFile_Handler.open("input.txt", ios::in | ios::out);
 
-	// FILE *pp=freopen("input.txt", "r", stdin);
-	// FILE *fp=freopen("binary.txt","w",stdout);
-
-	// //freopen("binary.txt", "w", stdout);
-
-
 
 	vector<string> lines;
 	string str;
@@ -91,7 +85,6 @@ int main() {
 				str[i] = '.';
 		str.push_back('.');
 		lines.push_back(str);
-		//cout << str << endn;
 	}
 	myFile_Handler.close();
 
@@ -107,15 +100,11 @@ int main() {
 
 	for (auto x : instruction) {
 		myFile_Handler1 <<  x << endl;
-		//cout << 1 << endn;
 	}
-	// fclose(pp);
-	// fclose(fp);
 
 
 	vector<string> instructions;
 
-	// freopen("binary.txt", "r", stdin);
 	string str1;
 	myFile_Handler1.seekg(ios::beg);
 	while (getline(myFile_Handler1, str1)) {
@@ -124,37 +113,41 @@ int main() {
 	}
 	myFile_Handler1.close();
 	freopen("output.txt", "w", stdout);
-	//myFile_Handler2.open("output.txt", ios::in | ios::out);
 	cout << instructions.size() << endl;
 	cout << "The input is: " << endl;
 	for (string i : instructions) {
 		cout << i << endl;
 	}
-	Simulator sim(256, 1);
+	Simulator sim(256, 2.5);
 	for (int i = 0; i < instructions.size(); i++) {
 		sim.mem.memory[i] = instructions[i];
 	}
 
-	//for (int i = 0; i < instructions.size(); i++) {
+
 	map<int,int> m=assembler.getProc();
 	cout<<"size of m"<<m.size()<<endl;
 	for(auto it:m){
 		cout<<"proc map"<<it.first<<" "<<it.second<<endl;
 	}
+	int total_cycles=0;
+	float total_time=0.0;
+	
 	while(sim.pc<instruction.size()){
 		//cout << sim.pc << endl;
-
+		int cnt=0;
 		//Fetching
 		sim.fetch(assembler.getProc());
 
 		cout << "IR: " << sim.instruction << endl;
 
 		vector<string> s;
-
+		
 		cout << "Before decode" << endl;
 		//Decoding
 		s = sim.decode();
-
+		if(s[0]=="lw" or s[0]=="sw"){
+			cnt=1;
+		}
 		cout << "After decode" << endl;
 		cout << s[0] << " " << s[1] << " " << s[2] << endl;
 
@@ -173,13 +166,19 @@ int main() {
 		sim.RFDump();
 
 
-		//cout<<"pc  "<<sim.pc+1<<endl;
+		cout<<"pc  "<<sim.pc+1<<endl;
+		float time=5.0;
+		if(cnt==1){
+			time+=sim.mem.accessTime;
+		}
+		cout<<"CYCLES SPENT TO PROCESS INSTRUCTION: "<<5<<endl;
+		cout<<"TIME TAKEN TO PROCESS INSTRUCTION: "<<time<<endl;
 		cout << "\n\n-----------------------------------------------\n";
 
-		
+		total_cycles+=5;
 
 	}
-	cout<<sim.mem.memory[12]<<endl;
-	//myFile_Handler2.close();
+	cout<<"TOTAL CYCLES: "<<total_cycles<<endl;
+	sim.mem.dump();
 
 }
