@@ -1,19 +1,19 @@
-# ASSEMBLER
+# Risc V ASSEMBLER
 C++ Program taking assembly code as input in the form of string and converting it in binary code Instruction of 32-bit and then storing it into a file "binary.txt". <br/>
 Here is the referenced used for converting assembly code to binary is : https://msyksphinz-self.github.io/riscv-isadoc/html/rvi.html#ebreak. <br/>
 All conversion is based on formats present in RISC – V Reference Sheet available in Project. <br/>
 
 # Risc V Simulator
-We have designed a simulator that simulates a subset of RISCV(RV32) ISA in C++. The maine components of this simulator are Main Memory, registers, instruction register, program counter(pc)
-This simulator has 5 stages:
-1)Instruction Fetch:  New instructions to be executed are loaded from the memory into the instruction register
-2)Decoding: The fetched instruction are decoded i.e. the simulator identifies the type of the instruction and the values of the required registers are also read.
-3)Execution: Different operations are performed as defined in the instruction
-4)Memory: If there is a need of accessing the memory, then this stage helps in loading and storing the values in the main memory.
-5)Writeback: In this stage, the values are written in the registers
+We have designed a simulator that simulates a subset of RISCV(RV32) ISA in C++. The maine components of this simulator are Main Memory, registers, instruction register,<br/> program counter(pc)<br/>
+This simulator has 5 stages:<br/>
+• Instruction Fetch:  New instructions to be executed are loaded from the memory into the instruction register<br/>
+• Decoding: The fetched instruction are decoded i.e. the simulator identifies the type of the instruction and the values of the required registers are also read.<br/>
+• Execution: Different operations are performed as defined in the instruction<br/>
+• Memory: If there is a need of accessing the memory, then this stage helps in loading and storing the values in the main memory.<br/>
+• Writeback: In this stage, the values are written in the registers<br/>
 
-The workflow of our simulator is as follows:
-First, it loads the input binary(compiled by our assembler) in the main memory, and then it starts executing the code at the address 0.
+The workflow of our simulator is as follows:<br/>
+First, it loads the input binary(compiled by our assembler) in the main memory, and then it starts executing the code at the address 0.<br/>
 Each instruction is then passed from the above mentioned 5 stages of our simulator
 
 # Test Cases
