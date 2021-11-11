@@ -13,7 +13,7 @@ we have added many test cases ,user can take input from there
 OUR PROGRAM IS ABLE TO PERFORM THE FOLLOWING INSTRUCTIONS:-
 
 ->	ADD             Addition
-->	ADDI 		Add Immediate
+->	ADDI 		        Add Immediate
 ->	SUB 		Subtraction
 ->	LW 		Load word
 ->	SW 		Store Word
