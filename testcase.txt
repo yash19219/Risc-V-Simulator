@@ -1,0 +1,112 @@
+addi r1, r0, 5
+addi r2, r0, 10
+addi r3, r0, 30
+main: ADDI r2, r2, 10
+BLT r2, r3, main
+
+
+LUI r1, 10
+LW r2, r1 000000000010
+
+LUI r1, 5
+LUI r2, 10
+LUI r3, 30
+Molan: 
+ADDI r2, r2, 10
+jaLr r0,r31,0
+JAL r31, Molan
+ADD r10,r1,r2
+
+// j and s 
+
+addi r1, r0, 5
+addi r2, r0, 10
+addi r3, r0, 30
+Molan: 
+ADDI r2, r2, 10
+jaLr r0,r31,0
+JAL r31, Molan
+ADD r10,r1,r2
+sw r10,10(r2)
+lw r20,10(r2)
+
+
+// r type
+
+addi r1, r0, 5
+addi r2, r0, 10
+SUB r3, r1, r2
+add r4 r1, r2
+and r5, r1, r2
+or r6, r1, r2
+xor r7, r1, r2
+sll r8, r1, r2
+sra r9, r1, r2
+
+
+// b type
+
+addi r1, r0, 4
+addi r2, r0, 10
+addi r3, r0, 30
+addi r4, r0, 5
+addi r5, r0, 8
+addi r6, r0, 7
+main: ADDI r2, r2, 10
+BLT r2, r3, main
+main1: ADDI r1,r1,1
+beq r1,r4,main1
+main2: ADDI r7,r7,-1 
+bne r7,r4,main2
+main3: ADDI r5,r5,-1
+bge r5,r4,main3
+
+
+//
+addi r5, r0, 500002
+addi r6, r0, 36
+sll r7, r5, r6
+
+
+addi r14, r0, 4
+addi r15, r0, 10
+addi r1, r0, 4
+addi r2, r0, 10
+addi r3, r0, 30
+addi r4, r0, 5
+addi r5, r0, 8
+addi r6, r0, 7
+addi r7, r0, 5
+addi r8, r0, 10
+main: ADDI r2, r2, 10
+BLT r2, r3, main
+main1: ADDI r1,r1,1
+beq r1,r4,main1
+main2: ADDI r7,r7,-1 
+bne r7,r4,main2
+main3: ADDI r5,r5,-1
+bge r5,r4,main3
+SUB r20, r7, r8
+add r20 r7, r8
+and r20, r7, r8
+or r20, r7, r8
+xor r20, r7, r8
+sll r20, r7, r8
+sra r20,r7, r8
+addi r9, r0, 5
+addi r12, r0, 10
+addi r11, r0, 30
+Molan: 
+ADDI r12, r12, 10
+jaLr r0,r31,0
+JAL r31, Molan
+ADD r10,r9,r12
+sw r10,10(r12)
+lw r20,10(r12)
+masterMolan:
+ADDI r15, r15, 1
+ADDI r14, r14, 5
+jaLr r0,r31,0
+main10:JAL r31, masterMolan
+bge r15,r14,main10
+
