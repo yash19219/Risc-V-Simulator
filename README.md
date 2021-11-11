@@ -23,23 +23,23 @@ user can take input from there
 # Support
 OUR PROGRAM IS ABLE TO PERFORM THE FOLLOWING INSTRUCTIONS:-
 
-->	ADD             Addition <br/>
-->	ADDI 		        Add Immediate <br/>
-->	SUB 		Subtraction <br/>
-->	LW 		Load word <br/>
-->	SW 		Store Word <br/>
-->	JALR 		Jump and Link Register <br/>
-->	JAL 		Jump and Link  <br/>
-->	BEQ 		Branch Equal to <br/>
-->	BNE 		Branch Not equal to <br/>
-->	BLT		Branch Less than <br/>
-->	BGE 		Branch greater than equal <br/>
-->	LUI 		Load Upper Immediate <br/>
-->	AND 		AND <br/>
-->	OR 		OR <br/>
-->	XOR 		XOR <br/>
-->	SLL 		Shift Logical left <br/>
-->	SRA 		Shift Right Arithmetic <br/>
+•	ADD     ->        Addition <br/>
+•	ADDI 	 -> 	        Add Immediate <br/>
+•	SUB 	 -> 	Subtraction <br/>
+•	LW 	 -> 	Load word <br/>
+•	SW 		 ->  Store Word <br/>
+•	JALR 	 -> 	Jump and Link Register <br/>
+•	JAL 	 -> 	Jump and Link  <br/>
+•	BEQ 	 -> 	Branch Equal to <br/>
+•	BNE 	 -> 	Branch Not equal to <br/>
+•	BLT		 ->  Branch Less than <br/>
+•	BGE 	 -> 	Branch greater than equal <br/>
+•	LUI 	 -> 	Load Upper Immediate <br/>
+•	AND 	 -> 	AND <br/>
+•	OR 	 -> 	OR <br/>
+•	XOR 	 -> 	XOR <br/>
+•	SLL 	 -> 	Shift Logical left <br/>
+•	SRA 	 -> 	Shift Right Arithmetic <br/>
 
 
 # Built With/ Concepts Used
