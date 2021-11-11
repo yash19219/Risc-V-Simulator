@@ -34,10 +34,12 @@ public:
 
 	//function to fetch the instruction
 	void fetch(map<int,int> m){
-		cout<<"PC IS : "<<pc<<endl;
+		cout<<"PC: "<<pc<<endl;
+		instruction=mem.memory[pc];
+		pc=pc+1;	
 		if(m.find(pc)==m.end() or registers[31]!=0){
-			instruction=mem.memory[pc];
-			pc=pc+1;	
+			
+			pc=pc;	
 		}
 		else{
 			pc=m[pc]+1;

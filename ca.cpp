@@ -64,7 +64,6 @@ int main() {
 	
 	while(sim.pc<instruction.size()){
 		int cnt=0;
-		
 
 		//Fetching
 		sim.fetch(assembler.getProc());
@@ -97,7 +96,7 @@ int main() {
 		sim.RFDump();
 
 
-		cout<<"pc  "<<sim.pc+1<<endl;
+		//cout<<"pc  "<<sim.pc+1<<endl;
 		float time=5.0;
 		if(cnt==1){
 			time+=sim.mem.accessTime;
