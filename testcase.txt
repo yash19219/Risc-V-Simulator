@@ -76,13 +76,14 @@ and r20, r7, r8
 or r20, r7, r8
 xor r20, r7, r8
 sll r20, r7, r8
+lui r25,10
 sra r20,r7, r8
 addi r9, r0, 5
 addi r12, r0, 10
 addi r11, r0, 30
 Molan: 
 ADDI r12, r12, 10
-jaLr r0,r31,0
+jaLr r27,r31,0
 JAL r31, Molan
 ADD r10,r9,r12
 sw r10,10(r12)
@@ -90,6 +91,6 @@ lw r20,10(r12)
 masterMolan:
 ADDI r15, r15, 1
 ADDI r14, r14, 5
-jaLr r0,r31,0
-main10:JAL r31, masterMolan
+jaLr r27,r31,0
+main10: JAL r31, masterMolan
 bge r15,r14,main10
