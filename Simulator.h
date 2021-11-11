@@ -2,12 +2,13 @@
 using namespace std;
 #include "MainMemory.h"
 
+
+// This is the class of our Simulator
+
 class Simulator{
 
 public:
 	int registers[32];
-	
-
 	int pc=0;
 	MainMemory mem;
 	string instruction;
@@ -21,6 +22,8 @@ public:
 	string JALR="1100111";
 	string JAL="1101111";
 
+
+	//contructor of the class to initialize or simulator
 	Simulator(int memSize,float memAccessTime){
 		mem.setSize(memSize);
 		mem.setAccessTime(memAccessTime);
@@ -28,6 +31,8 @@ public:
 		registers[i]=0;
 		}
 	}
+
+	//function to fetch the instruction
 	void fetch(map<int,int> m){
 		cout<<"PC IS : "<<pc<<endl;
 		if(m.find(pc)==m.end() or registers[31]!=0){
@@ -40,6 +45,8 @@ public:
 		
 	}
 
+
+	//function to decode the instruction
 	vector<string> decode(){
 		vector<string> v;
 		string opt=instruction.substr(25,7);
@@ -212,7 +219,7 @@ public:
 		return v;
 	}
 
-
+	//funtion to execute the current instruction
 	int execute(vector<string> v){
 		cout<<"inside exe "<<v[0]<<endl;
 		if(v[0].compare("add")==0){
@@ -276,6 +283,8 @@ public:
 		}
 	}
 
+
+	//function which helps in accessing the memory(performs load and store operations)
 	int memory(vector<string> v,int val){
 		if(v[0].compare("lw")==0){
 			return stoi(mem.memory[val],0,2);
@@ -291,12 +300,17 @@ public:
 	}
 
 
+	//function to write the values in register
 	void writeBack(vector<string> s,int value){
 		if(s[0].compare("beq")==0 or s[0].compare("bne")==0 or s[0].compare("bge")==0 or s[0].compare("blt")==0 or s[0].compare("sw")==0 )
 			return ;
 		else
 			registers[stoi(s[1],0,2)]=value;
 	}
+
+
+
+	//helper functions that perform different kinds of operations
 
 	int add(string rd, string rs1, string rs2){
 		int a=stoi(rs1,0,2);
@@ -379,17 +393,13 @@ public:
 	}
 
 	void beq(string rs1,string rs2,string offset){
-		//cout<<"INSIDE"<<endl;
-		//cout<<"off in bin "<<offset<<endl;
 		int a=registers[stoi(rs1,0,2)];
 		int b=registers[stoi(rs2,0,2)];
-		//cout<<a<<" "<<b<<endl;
 		if(a==b){
 			int c=stoi(offset,0,2);
 			if(c>2047){
 				c-=4096;
 			}
-			//cout<<"offset "<<c<<endl;
 			pc=pc+c-1;
 
 		}
@@ -397,51 +407,39 @@ public:
 	}
 
 	void bne(string rs1,string rs2,string offset){
-		//cout<<"INSIDE"<<endl;
-		//cout<<"off in bin "<<offset<<endl;
 		int a=registers[stoi(rs1,0,2)];
 		int b=registers[stoi(rs2,0,2)];
-		//cout<<a<<" "<<b<<endl;
 		if(a!=b){
 			int c=stoi(offset,0,2);
 			if(c>2047){
 				c-=4096;
 			}
-			//cout<<"offset "<<c<<endl;
 			pc=pc+c-1;
 
 		}
 	}
 
 	void blt(string rs1,string rs2,string offset){
-		//cout<<"INSIDE"<<endl;
-		//cout<<"off in bin "<<offset<<endl;
 		int a=registers[stoi(rs1,0,2)];
 		int b=registers[stoi(rs2,0,2)];
-		//cout<<a<<" "<<b<<endl;
 		if(a<b){
 			int c=stoi(offset,0,2);
 			if(c>2047){
 				c-=4096;
 			}
-			//cout<<"offset "<<c<<endl;
 			pc=pc+c-1;
 
 		}
 	}
 
 	void bge(string rs1,string rs2,string offset){
-		//cout<<"INSIDE"<<endl;
-		//cout<<"off in bin "<<offset<<endl;
 		int a=registers[stoi(rs1,0,2)];
 		int b=registers[stoi(rs2,0,2)];
-		//cout<<a<<" "<<b<<endl;
 		if(a>=b){
 			int c=stoi(offset,0,2);
 			if(c>2047){
 				c-=4096;
 			}
-			//cout<<"offset "<<c<<endl;
 			pc=pc+c-1;
 
 		}
@@ -519,6 +517,8 @@ public:
 		//registers[stoi(rd,0,2)]=a>>b;
 	}
 
+
+	//function that print the values of the registers
 	void RFDump(){
 		for(int i=0;i<8;i++){
 			cout<<"R"<<i<<": "<<registers[i]<<"    ";
@@ -538,8 +538,6 @@ public:
 		cout<<endl;
 
 	}
-
-
 
 
 };

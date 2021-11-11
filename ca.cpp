@@ -1,66 +1,3 @@
-// #include<bits/stdc++.h>
-// #include "Simulator.h"
-// #include "assembler.h"
-// using namespace std;
-
-// int main(){
-
-// 	vector<string> instructions;
-
-// 	freopen("binary.txt","r",stdin);
-// 	freopen("output.txt","w",stdout);
-// 	string str1;
-// 	while(getline(cin,str1)){
-// 		instructions.push_back(str1);
-// 	}
-// 	cout<<instructions.size()<<endl;
-// 	cout<<"The input is: "<<endl;
-// 	for(string i:instructions){
-// 		cout<<i<<endl;
-// 	}
-// 	Simulator sim(256,1);
-// 	for(int i=0;i<instructions.size();i++){
-// 		sim.mem.memory[i]=instructions[i];
-// 	}
-
-// 	for(int i=0;i<instructions.size();i++){
-		
-// 		cout<<i<<endl;
-
-// 		//Fetching 
-// 		sim.fetch();
-
-// 		cout<<"IR: "<<sim.instruction<<endl;
-
-// 		vector<string> s;
-
-// 		cout<<"Before decode"<<endl;
-// 		//Decoding
-// 		s=sim.decode();
-
-// 		cout<<"After decode"<<endl;
-// 		cout<<s[0]<<" "<<s[1]<<" "<<s[2]<<endl;
-
-// 		cout<<"Before exe"<<endl;
-// 		//EXECUTION 
-// 		int a=sim.execute(s);
-
-// 		cout<<"Before mem"<<endl;
-// 		//Memory
-// 		int b=sim.memory(s,a);
-
-// 		cout<<"Before writeBack"<<endl;
-// 		//Writeback
-// 		sim.writeBack(s,b);	
-
-// 		sim.RFDump();
-
-// 		cout<<"\n\n-----------------------------------------------\n";
-
-// 	}
-
-
-// }
 
 #include<bits/stdc++.h>
 #include "Simulator.h"
@@ -108,16 +45,12 @@ int main() {
 	string str1;
 	myFile_Handler1.seekg(ios::beg);
 	while (getline(myFile_Handler1, str1)) {
-		//cout << str1 << endl;
 		instructions.push_back(str1);
 	}
 	myFile_Handler1.close();
 	freopen("output.txt", "w", stdout);
 	cout << instructions.size() << endl;
-	cout << "The input is: " << endl;
-	for (string i : instructions) {
-		cout << i << endl;
-	}
+	
 	Simulator sim(256, 2.5);
 	for (int i = 0; i < instructions.size(); i++) {
 		sim.mem.memory[i] = instructions[i];
@@ -125,16 +58,14 @@ int main() {
 
 
 	map<int,int> m=assembler.getProc();
-	cout<<"size of m"<<m.size()<<endl;
-	for(auto it:m){
-		cout<<"proc map"<<it.first<<" "<<it.second<<endl;
-	}
+	
 	int total_cycles=0;
 	float total_time=0.0;
 	
 	while(sim.pc<instruction.size()){
-		//cout << sim.pc << endl;
 		int cnt=0;
+		
+
 		//Fetching
 		sim.fetch(assembler.getProc());
 

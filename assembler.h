@@ -298,23 +298,6 @@ public:
 
 		}
 
-
-		// for (int i1 = 0; i1 < nlines.size(); i1++) {
-		// 	deb(i1);
-		// 	for (int i = 0; i < nlines[i1].size(); i++) {
-
-		// 		cout << nlines[i1][i] << " ";
-
-		// 	}
-		// 	cout << endl;
-
-		// }
-
-
-
-
-
-
 		for (int i = 0; i < 32; i++) {
 			string rv = bitset<5> (i).to_string();
 			string ii = to_string(i);
@@ -431,48 +414,32 @@ public:
 
 			}
 			else if (op == "jal") {
-				// rd offset
-				//ar = i1 + 1;
 				string rd = "", r = "";
-
-				//vector<string> a = type4(last, i1, line);
 				rd = registers[nlines[i1][last + 1]];
-
-
-
 				string ans = jal(rd, nlines[i1][last + 2], i1);
 				instructions.push_back(ans);
 				deb(ans);
-
-
-
-
 			}
 
 			else if (op == "beq") {
 
 				string rs1 = "", rs2 = "";
-				//vector<string> a = type2(last, i1, line);
 				rs1 = registers[nlines[i1][last + 1]];
 				rs2 = registers[nlines[i1][last + 2]];
-				//deb(a[2]);
-
 				string ans = beq(rs1, rs2, i1, nlines[i1][last + 3]);
 				instructions.push_back(ans);
 
-
 			}
+
 			else if (op == "bne") {
 				string rs1 = "", rs2 = "";
-				//vector<string> a = type2(last, i1, line);
 				rs1 = registers[nlines[i1][last + 1]];
 				rs2 = registers[nlines[i1][last + 2]];
-				//deb(a[2]);
-
 				string ans = bne(rs1, rs2, i1, nlines[i1][last + 3]);
 				instructions.push_back(ans);
 
 			}
+
 			else if (op == "blt") {
 				string rs1 = "", rs2 = "";
 				rs1 = registers[nlines[i1][last + 1]];
@@ -481,6 +448,7 @@ public:
 				instructions.push_back(ans);
 
 			}
+
 			else if (op == "bge") {
 				string rs1 = "", rs2 = "";
 				rs1 = registers[nlines[i1][last + 1]];
@@ -489,70 +457,61 @@ public:
 				instructions.push_back(ans);
 
 			}
+
 			else if (op == "lui") {
 				string rs1 = "";
-
-				//	vector<string> a = type3(last, i1, line);
-
 				rs1 = registers[nlines[i1][last + 1]];
 				int val = stoi(nlines[i1][last + 2]);
-
-
 				string ans = lui(rs1, val);
 				instructions.push_back(ans);
 
 			}
+
 			else if (op == "and") {
 				string rs1 = "", rs2 = "", rd = "";
 				rd = registers[nlines[i1][last + 1]];
 				rs1 = registers[nlines[i1][last + 2]];
 				rs2 = registers[nlines[i1][last + 3]];
-
-
 				string ans = annd(rs1, rs2, rd);
 				instructions.push_back(ans);
 
 			}
+
 			else if (op == "or") {
 				string rs1 = "", rs2 = "", rd = "";
 				rd = registers[nlines[i1][last + 1]];
 				rs1 = registers[nlines[i1][last + 2]];
 				rs2 = registers[nlines[i1][last + 3]];
-
-
 				string ans = oor(rs1, rs2, rd);
 				instructions.push_back(ans);
 
 			}
+
 			else if (op == "xor") {
 				string rs1 = "", rs2 = "", rd = "";
 				rd = registers[nlines[i1][last + 1]];
 				rs1 = registers[nlines[i1][last + 2]];
 				rs2 = registers[nlines[i1][last + 3]];
-
-
 				string ans = xorr(rs1, rs2, rd);
 				instructions.push_back(ans);
 
 			}
+
 			else if (op == "sll") {
 				string rs1 = "", rs2 = "", rd = "";
 				rd = registers[nlines[i1][last + 1]];
 				rs1 = registers[nlines[i1][last + 2]];
 				rs2 = registers[nlines[i1][last + 3]];
-
-
 				string ans = sll(rs1, rs2, rd);
 				instructions.push_back(ans);
 
 			}
+
 			else if (op == "sra") {
 				string rs1 = "", rs2 = "", rd = "";
 				rd = registers[nlines[i1][last + 1]];
 				rs1 = registers[nlines[i1][last + 2]];
 				rs2 = registers[nlines[i1][last + 3]];
-
-
 				string ans = sra(rs1, rs2, rd);
 				instructions.push_back(ans);
 
