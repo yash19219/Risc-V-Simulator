@@ -4,7 +4,7 @@ Here is the referenced used for converting assembly code to binary is : https://
 All conversion is based on formats present in RISC – V Reference Sheet available in Project. <br/>
 
 # Risc V Simulator
-We have designed a simulator that simulates a subset of RISCV(RV32) ISA in C++. The maine components of this simulator are Main Memory, registers, instruction register,<br/> program counter(pc)<br/>
+We have designed a simulator that simulates a subset of RISCV(RV32) ISA in C++. The main components of this simulator are Main Memory, registers, instruction register,<br/> program counter(pc)<br/>
 This simulator has 5 stages:<br/>
 • Instruction Fetch:  New instructions to be executed are loaded from the memory into the instruction register<br/>
 • Decoding: The fetched instruction are decoded i.e. the simulator identifies the type of the instruction and the values of the required registers are also read.<br/>
