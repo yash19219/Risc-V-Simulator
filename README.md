@@ -42,11 +42,9 @@ OUR PROGRAM IS ABLE TO PERFORM THE FOLLOWING INSTRUCTIONS:-
 •	SRA 	 -> 	Shift Right Arithmetic <br/>
 
 
-# Built With/ Concepts Used
-•	C++ complier is required to run this program
 
 # Built With/ Concepts Used
-•	C ++      \
+•	C++ complier is required to run this program   \
 •	RISC – V (32-Bit Architecture)
 
 # How to build program (In Compiler)
