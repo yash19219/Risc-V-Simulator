@@ -23,7 +23,7 @@ jaLr r0,r31,0
 JAL r31, Molan
 ADD r10,r1,r2
 
-
+// j and s 
 
 LUI r1, 5
 LUI r2, 10
@@ -36,3 +36,36 @@ ADD r10,r1,r2
 sw r10,10(r2)
 lw r20,10(r2)
 
+
+// r type
+
+LUI r1, 5
+LUI r2, 10
+SUB r3, r1, r2
+add r4 r1, r2
+and r5, r1, r2
+or r6, r1, r2
+xor r7, r1, r2
+sll r8, r1, r2
+sra r9, r1, r2
+
+
+// b type
+
+LUI r1, 4
+LUI r2, 10
+LUI r3, 30
+LUI r4, 5
+LUI r5, 8
+lui r7 , 7
+main: ADDI r2, r2, 10
+BLT r2, r3, main
+main1: ADDI r1,r1,1
+beq r1,r4,main1
+main2: ADDI r7,r7,-1 
+bne r7,r4,main2
+main3: ADDI r5,r5,-1
+bge r5,r4,main3
+
+
+//
