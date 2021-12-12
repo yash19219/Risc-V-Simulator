@@ -13,9 +13,10 @@ public:
 	MainMemory mem;
 	string instruction;
 
+	//int hits,misses;
 
 	//Cache c=cache();
-	Cache c = Cache(16, 0, 0, 0, 2, "writeBack", "FIFO");
+	Cache c = Cache(64, 50, 1, 0, 4, "writeBack", "FIFO");
 
 	string R = "0110011";
 	string I = "0010011";
@@ -29,7 +30,6 @@ public:
 
 	//contructor of the class to initialize or simulator
 	Simulator(int memSize, float memAccessTime) {
-
 		mem.setSize(memSize);
 		mem.setAccessTime(memAccessTime);
 		for (int i = 0; i < 32; i++) {
@@ -39,12 +39,16 @@ public:
 	}
 
 	//function to fetch the instruction
-	void fetch(map<int, int> m) {
+	int fetch(map<int, int> m) {
 		cout << "PC: " << pc << endl;
 		//instruction = mem.memory[pc];
+
 		string add = bitset<32>(pc).to_string();
 		string b = add.substr(2, 30) + "00";
-		instruction = c.read(b, mem);
+		pair<string, int> p = c.read(b, mem);
+		instruction = p.first;
+		cout << "REQUIRED: " << mem.memory[pc] << endl;
+		cout << "RETURNED: " << instruction << endl;
 
 		cout << "HURRAYYYY!!!!!!!!!!\n";
 		pc = pc + 1;
@@ -55,6 +59,7 @@ public:
 		else {
 			pc = m[pc] + 1;
 		}
+		return p.second;
 
 	}
 
@@ -298,12 +303,12 @@ public:
 
 
 	//function which helps in accessing the memory(performs load and store operations)
-	int memory(vector<string> v, int val) {
+	pair<int, int> memory(vector<string> v, int val) {
 		if (v[0].compare("lw") == 0) {
 			string addd = bitset<32>(val).to_string();
 			string bddd = addd.substr(2, 30) + "00";
-			string str = c.read(bddd, mem);
-			return stoi(str, 0, 2);
+			pair<string, int> str = c.read(bddd, mem);
+			return {stoi(str.first, 0, 2), str.second};
 			//return stoi(mem.memory[val],0,2);
 		}
 
@@ -311,13 +316,13 @@ public:
 			string addd = bitset<32>(val).to_string();
 			string bddd = addd.substr(2, 30) + "00";
 			string data = bitset<32>(registers[stoi(v[2], 0, 2)]).to_string();
-			c.write(bddd, data, mem);
+			int z = c.write(bddd, data, mem);
 			//mem.memory[val] = bitset<32>(registers[stoi(v[2],0,2)]).to_string();
 			cout << "IN MEMORY : " << val << " " << stoi(mem.memory[val], 0, 2) << endl;
-			return 0;
+			return {0, z};
 		}
 		else {
-			return val;
+			return {val, 0};
 		}
 	}
 

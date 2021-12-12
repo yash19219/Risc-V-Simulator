@@ -59,22 +59,28 @@ int main() {
 		sim.mem.memory[i] = instructions[i];
 	}
 
+	cout << "STOI\n";
 	for (int i = 0; i < instructions.size(); i++) {
 		string a = bitset<32>(i).to_string();
 		string b = a.substr(2, 30);
 
 		if (sim.c.associativity == 1) {
+			cout << "DONOT ENTER\n";
 			int indx = log2(sim.c.size);
 			string Index = b.substr(30 - indx, indx);
 			int indexInt = stoi(Index, 0, 2);
 			sim.c.tag[indexInt] = b;
 			sim.c.data[indexInt] = instructions[i];
 		}
-		else if (sim.c.associativity == sim.c.size and i < sim.c.size) {
-			sim.c.tag[i] = b;
-			sim.c.data[i] = instructions[i];
+		else if (sim.c.associativity == sim.c.size) {
+			if (i < sim.c.size) {
+				//cout << "in\n";
+				sim.c.tag[i] = b;
+				sim.c.data[i] = instructions[i];
+			}
 		}
 		else {
+			cout << "_____\n";
 			int indx = log2(sim.c.size / sim.c.associativity);
 			string index = b.substr(30 - indx, indx);
 			int indexInt = stoi(index, 0, 2);
@@ -89,9 +95,10 @@ int main() {
 		}
 
 	}
-	sim.c.tag[0] = "";
-	sim.c.data[0] = "";
+	// sim.c.tag[0] = "";
+	// sim.c.data[0] = "";
 
+	cout << "OUTTTTTTTTT\n";
 	for (int i = 0; i < sim.c.size; i++) {
 		if (i % sim.c.associativity == 0) {
 			cout << "\n\n\n";
@@ -107,9 +114,15 @@ int main() {
 
 	while (sim.pc < instruction.size()) {
 		int cnt = 0;
-
+		int time = 3;
 		//Fetching
-		sim.fetch(assembler.getProc());
+		int v = sim.fetch(assembler.getProc());
+
+		time += sim.c.hitTime;
+
+		if (v == -1) {
+			time += sim.c.missPenalty;
+		}
 
 		cout << "IR: " << sim.instruction << endl;
 
@@ -130,28 +143,38 @@ int main() {
 
 		cout << "Before mem" << endl;
 		//Memory
-		int b = sim.memory(s, a);
+		pair<int, int> b = sim.memory(s, a);
+
+
+		if (s[0] == "lw" or s[0] == "sw")
+			time += sim.c.hitTime;
+
+		if (b.second == -1) {
+			time += sim.c.missPenalty;
+		}
 
 		cout << "Before writeBack" << endl;
 		//Writeback
-		sim.writeBack(s, b);
+		sim.writeBack(s, b.first);
 
 		sim.RFDump();
 
 
 		//cout<<"pc  "<<sim.pc+1<<endl;
-		float time = 5.0;
-		if (cnt == 1) {
-			time += sim.mem.accessTime;
-		}
-		cout << "CYCLES SPENT TO PROCESS INSTRUCTION: " << 5 << endl;
-		cout << "TIME TAKEN TO PROCESS INSTRUCTION: " << time << endl;
+
+
+		cout << "CYCLES SPENT TO PROCESS INSTRUCTION: " << time << endl;
+		//cout << "TIME TAKEN TO PROCESS INSTRUCTION: " << time << endl;
 		cout << "\n\n-----------------------------------------------\n";
 
-		total_cycles += 5;
+		total_cycles += time;
 
 	}
 	cout << "TOTAL CYCLES: " << total_cycles << endl;
+
+	cout << "Total Cache Hits: " << sim.c.hits << endl;
+	cout << "Total Cache Misses: " << sim.c.misses << endl;
+	cout << "\n\n";
 	sim.mem.dump();
 	sim.c.dump();
 

@@ -20,10 +20,15 @@ public:
 	int cnt;
 	int *counter;
 
+	int hits, misses;
+
+
 	vector<priority_queue<pair<int, string>>> lru;
 
 	Cache(int s, int MissPenalty, int HitTime, int BlockSize, int Assocativity, string write, string replace) {
 		size = s;
+		hits = 0;
+		misses = 0;
 		missPenalty = MissPenalty;
 		hitTime = HitTime;
 		blockSize = BlockSize;
@@ -77,8 +82,10 @@ public:
 			int indexInt = stoi(Index, 0, 2);
 
 			if (tag[indexInt] == Tag) {
+				hits++;
 				return {true, {data[indexInt], indexInt}};
 			}
+			misses++;
 			return {false, {"-1", -1}};
 		}
 
@@ -86,6 +93,7 @@ public:
 			// fully associative
 			for (int i = 0; i < size; i++) {
 				if (tag[i] == Tag) {
+					hits++;
 					if (rPolicy == "LRU") {
 						int a = isFull(address);
 						if (a == -1) {
@@ -107,6 +115,7 @@ public:
 					lruPush(0, Tag);
 				}
 			}
+			misses++;
 
 			return {false, {"-1", -1}};
 
@@ -120,6 +129,7 @@ public:
 			int indexInt = stoi(Index, 0, 2);
 			for (int i = indexInt * associativity; i < (indexInt + 1 )* associativity; i++) {
 				if (tag[i] == Tag) {
+					hits++;
 					if (rPolicy == "LRU") {
 						int a = isFull(address);
 						if (a == -1) {
@@ -140,6 +150,7 @@ public:
 					lruPush(indexInt, Tag);
 				}
 			}
+			misses++;
 			return {false, {"-1", -1}};
 		}
 
@@ -519,7 +530,7 @@ public:
 		}
 	}
 
-	string read(string address, MainMemory mem) {
+	pair<string, int> read(string address, MainMemory mem) {
 		cout << "IN CACHE READ\n";
 		cout << "Address Val : " << address << endl;
 		string Tag = address.substr(0, 30);
@@ -528,7 +539,7 @@ public:
 
 		if (p.first) {
 			cout << "HIT!!!!!!!!i\n";
-			return p.second.first;
+			return {p.second.first, 1};
 		}
 		else {
 			cout << "Miss!!!!!!!!\n";
@@ -537,27 +548,28 @@ public:
 				cout << "FULLLLLL!!!!!!!!\n";
 				int idx = replace(address, mem);
 				cout << "REPLACE: " << idx << endl;
-				for (int i = 0; i < size; i++) {
-					cout << bitset<32>(i).to_string() << "\t\t\t" << tag[i] << "\t\t\t" << data[i] << endl;
-				}
-				return data[idx];
+				// for (int i = 0; i < size; i++) {
+				// 	cout << bitset<32>(i).to_string() << "\t\t\t" << tag[i] << "\t\t\t" << data[i] << endl;
+				// }
+				data[idx] = mem.memory[stoi(Tag, 0, 2)];
+				return {data[idx], -1};
 			}
 			else {
 				cout << "NOT FULL\n";
 				string val = mem.memory[stoi(Tag, 0, 2)];
 				data[a] = val;
 				tag[a] = Tag;
-				for (int i = 0; i < size; i++) {
-					cout << bitset<32>(i).to_string() << "\t\t\t" << tag[i] << "\t\t\t" << data[i] << endl;
-				}
-				return data[a];
+				// for (int i = 0; i < size; i++) {
+				// 	cout << bitset<32>(i).to_string() << "\t\t\t" << tag[i] << "\t\t\t" << data[i] << endl;
+				// }
+				return {data[a], -1};
 			}
 		}
 
 
 	}
 
-	void write(string address, string value, MainMemory mem) {
+	int write(string address, string value, MainMemory mem) {
 		cout << "IN CACHE WRITE\n";
 		string Tag = address.substr(0, 30);
 		if (wPolicy == "writeThrough") {
@@ -567,6 +579,7 @@ public:
 				cout << "HIT!!!!!!!!\n";
 				data[p.second.second] = value;
 				mem.memory[stoi(Tag, 0, 2)] = value;
+				return 1;
 			}
 			else {
 				cout << "Miss!!!!!!!!\n";
@@ -584,6 +597,7 @@ public:
 					data[a] = value;
 					mem.memory[stoi(Tag, 0, 2)] = value;
 				}
+				return -1;
 
 				//data[a]=value;
 				//mem.memory[a]=value;   //we are accessing mem two times can do better
@@ -596,6 +610,7 @@ public:
 				cout << "HIT!!!!!!!!\n" << p.second.second << endl;
 				data[p.second.second] = value;
 				dirtyBit[p.second.second] = "1";
+				return 1;
 			}
 			else {
 				cout << "Miss!!!!!!!!\n";
@@ -613,6 +628,7 @@ public:
 					data[a] = value;
 					dirtyBit[a] = "1";
 				}
+				return -1;
 				//we are accessing mem two times can do better
 			}
 		}
