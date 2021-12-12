@@ -1,8 +1,11 @@
 
+
 #include<bits/stdc++.h>
 #include "Simulator.h"
 #include <fstream>
+
 #include "assembler.h"
+
 using namespace std;
 
 int main() {
@@ -50,20 +53,20 @@ int main() {
 	myFile_Handler1.close();
 	freopen("output.txt", "w", stdout);
 	cout << instructions.size() << endl;
-	
+
 	Simulator sim(256, 2.5);
 	for (int i = 0; i < instructions.size(); i++) {
 		sim.mem.memory[i] = instructions[i];
 	}
 
 
-	map<int,int> m=assembler.getProc();
-	
-	int total_cycles=0;
-	float total_time=0.0;
-	
-	while(sim.pc<instruction.size()){
-		int cnt=0;
+	map<int, int> m = assembler.getProc();
+
+	int total_cycles = 0;
+	float total_time = 0.0;
+
+	while (sim.pc < instruction.size()) {
+		int cnt = 0;
 
 		//Fetching
 		sim.fetch(assembler.getProc());
@@ -71,12 +74,12 @@ int main() {
 		cout << "IR: " << sim.instruction << endl;
 
 		vector<string> s;
-		
+
 		cout << "Before decode" << endl;
 		//Decoding
 		s = sim.decode();
-		if(s[0]=="lw" or s[0]=="sw"){
-			cnt=1;
+		if (s[0] == "lw" or s[0] == "sw") {
+			cnt = 1;
 		}
 		cout << "After decode" << endl;
 		cout << s[0] << " " << s[1] << " " << s[2] << endl;
@@ -97,18 +100,19 @@ int main() {
 
 
 		//cout<<"pc  "<<sim.pc+1<<endl;
-		float time=5.0;
-		if(cnt==1){
-			time+=sim.mem.accessTime;
+		float time = 5.0;
+		if (cnt == 1) {
+			time += sim.mem.accessTime;
 		}
-		cout<<"CYCLES SPENT TO PROCESS INSTRUCTION: "<<5<<endl;
-		cout<<"TIME TAKEN TO PROCESS INSTRUCTION: "<<time<<endl;
+		cout << "CYCLES SPENT TO PROCESS INSTRUCTION: " << 5 << endl;
+		cout << "TIME TAKEN TO PROCESS INSTRUCTION: " << time << endl;
 		cout << "\n\n-----------------------------------------------\n";
 
-		total_cycles+=5;
+		total_cycles += 5;
 
 	}
-	cout<<"TOTAL CYCLES: "<<total_cycles<<endl;
+	cout << "TOTAL CYCLES: " << total_cycles << endl;
 	sim.mem.dump();
+	sim.c.dump();
 
 }
