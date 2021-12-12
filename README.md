@@ -54,8 +54,9 @@ OUR PROGRAM IS ABLE TO PERFORM THE FOLLOWING INSTRUCTIONS:-
 ->	output.txt will contain the final output  <br/>
 
 ## Final Report 
-![1](pic/1.jpg)
-![2](pic/2.jpg)
-![3](pic/3.jpg)
-![4](pic/4.jpg)
+![1](pic/cachetyp.jpg.jpg)
+![2](pic/1.jpg)
+![3](pic/2.jpg)
+![4](pic/3.jpg)
+![5](pic/4.jpg)
 
