@@ -355,7 +355,7 @@ public:
 		while (!lru[idx].empty()) {
 			pair<int, string> a = lru[idx].top();
 			lru[idx].pop();
-			deb1(a.first, a.second);
+			//deb1(a.first, a.second);
 			if (a.second != tag1)
 				store.push_back({a.first + 1, a.second });
 			else
@@ -382,7 +382,7 @@ public:
 			while (!lru[idx].empty()) {
 				pair<int, string> a1 = lru[idx].top();
 				lru[idx].pop();
-				deb1(a1.first, a1.second);
+				//deb1(a1.first, a1.second);
 
 
 			}
@@ -402,7 +402,7 @@ public:
 
 
 		while (!lru[idx].empty()) {
-			deb("a1");
+			//deb("a1");
 			pair<int, string> a = lru[idx].top();
 			lru[idx].pop();
 			if (tag1 != a.second)
@@ -415,7 +415,7 @@ public:
 		}
 
 		lru[idx].push({1, tag1});
-		deb(lru[idx].size());
+		//deb(lru[idx].size());
 
 
 	}

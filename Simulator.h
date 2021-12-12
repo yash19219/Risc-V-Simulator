@@ -12,8 +12,10 @@ public:
 	int pc = 0;
 	MainMemory mem;
 	string instruction;
+
+
 	//Cache c=cache();
-	Cache c = Cache(16, 0, 0, 0, 2, "writeBack", "LRU");
+	Cache c = Cache(16, 0, 0, 0, 2, "writeBack", "FIFO");
 
 	string R = "0110011";
 	string I = "0010011";
@@ -27,17 +29,24 @@ public:
 
 	//contructor of the class to initialize or simulator
 	Simulator(int memSize, float memAccessTime) {
+
 		mem.setSize(memSize);
 		mem.setAccessTime(memAccessTime);
 		for (int i = 0; i < 32; i++) {
 			registers[i] = 0;
 		}
+
 	}
 
 	//function to fetch the instruction
 	void fetch(map<int, int> m) {
 		cout << "PC: " << pc << endl;
-		instruction = mem.memory[pc];
+		//instruction = mem.memory[pc];
+		string add = bitset<32>(pc).to_string();
+		string b = add.substr(2, 30) + "00";
+		instruction = c.read(b, mem);
+
+		cout << "HURRAYYYY!!!!!!!!!!\n";
 		pc = pc + 1;
 		if (m.find(pc) == m.end() or registers[31] != 0) {
 

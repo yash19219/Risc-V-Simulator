@@ -59,6 +59,46 @@ int main() {
 		sim.mem.memory[i] = instructions[i];
 	}
 
+	for (int i = 0; i < instructions.size(); i++) {
+		string a = bitset<32>(i).to_string();
+		string b = a.substr(2, 30);
+
+		if (sim.c.associativity == 1) {
+			int indx = log2(sim.c.size);
+			string Index = b.substr(30 - indx, indx);
+			int indexInt = stoi(Index, 0, 2);
+			sim.c.tag[indexInt] = b;
+			sim.c.data[indexInt] = instructions[i];
+		}
+		else if (sim.c.associativity == sim.c.size and i < sim.c.size) {
+			sim.c.tag[i] = b;
+			sim.c.data[i] = instructions[i];
+		}
+		else {
+			int indx = log2(sim.c.size / sim.c.associativity);
+			string index = b.substr(30 - indx, indx);
+			int indexInt = stoi(index, 0, 2);
+			int j = 0;
+			while (j < sim.c.associativity and sim.c.tag[indexInt * sim.c.associativity + j] != "") {
+				j++;
+			}
+			if (j < sim.c.associativity) {
+				sim.c.tag[indexInt * sim.c.associativity + j] = b;
+				sim.c.data[indexInt * sim.c.associativity + j] = instructions[i];
+			}
+		}
+
+	}
+	sim.c.tag[0] = "";
+	sim.c.data[0] = "";
+
+	for (int i = 0; i < sim.c.size; i++) {
+		if (i % sim.c.associativity == 0) {
+			cout << "\n\n\n";
+		}
+		cout << i << " --> " << sim.c.tag[i] << "\t\t\t" << sim.c.data[i] << endl;
+	}
+	cout << "\n\n\n-------------------------------------------------------------------\n\n\n";
 
 	map<int, int> m = assembler.getProc();
 
