@@ -58,5 +58,4 @@ OUR PROGRAM IS ABLE TO PERFORM THE FOLLOWING INSTRUCTIONS:-
 ![2](pic/2.jpg)
 ![3](pic/3.jpg)
 ![4](pic/4.jpg)
-![5](pic/5.jpg)
-![6](pic/6.jpg)
+
